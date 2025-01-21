@@ -1,0 +1,1 @@
+{"name":"Local: index","url":"g:\\Rifat\\Server\\index.cpp","tests":[{"id":1734278163180,"input":"5\nqwq\nppppp\npppwwwqqq\nwqpqwpqwwqp\npqpqpqpq","output":"pwp\nqqqqq\npppwwwqqq\nqpwwpqwpqpw\npqpqpqpq"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"g:\\Rifat\\Server\\index.cpp","group":"local","local":true}
