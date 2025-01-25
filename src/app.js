@@ -10,11 +10,22 @@ const cookieParser = require('cookie-parser');
 // Load environment variables
 dotenv.config();
 
-// const data
+const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174', 'https://fastestcreators.com'];
 const corsOptions = {
-  origin: ['http://localhost:5173',"http://localhost:5174"],// Frontend URL
-  credentials: true, // Allow cookies to be sent with requests
+  origin: (origin, callback) => {
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
 };
+// const data
+// const corsOptions = {
+//   origin: ['http://localhost:5173',"http://localhost:5174","https://fastestcreators.com"],// Frontend URL
+//   credentials: true, // Allow cookies to be sent with requests
+// };
 
 //middleware
 app.use(express.json());
