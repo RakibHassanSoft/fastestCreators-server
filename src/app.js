@@ -10,7 +10,7 @@ const cookieParser = require('cookie-parser');
 // Load environment variables
 dotenv.config();
 
-const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174', 'https://fastestcreators.com'];
+const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174', 'https://fastestcreators.com',"https://effortless-axolotl-520cbe.netlify.app/"];
 const corsOptions = {
   origin: (origin, callback) => {
     if (allowedOrigins.includes(origin) || !origin) {
