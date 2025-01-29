@@ -2,6 +2,7 @@ const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const sendEmail = async (to, subject, htmlContent) => {
+  console.log({to,subject})
   let transporter = nodemailer.createTransport({
     service: process.env.EMAIL_SERVICE,
     auth: {
@@ -19,6 +20,7 @@ const sendEmail = async (to, subject, htmlContent) => {
 
   try {
     let info = await transporter.sendMail(mailOptions);
+    console.log(info)
     console.log('Email sent: ' + info.response);
   } catch (error) {
     console.error('Error sending email:', error);

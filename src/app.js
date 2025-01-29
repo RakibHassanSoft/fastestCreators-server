@@ -1,22 +1,26 @@
-const express = require('express');
-const cors = require('cors');
-const routes = require('./route/routes');
-const connectDB = require('./db/db');
+const express = require("express");
+const cors = require("cors");
+const routes = require("./route/routes");
+const connectDB = require("./db/db");
 const app = express();
-const dotenv =  require( "dotenv");
-const cookieParser = require('cookie-parser'); 
-
+const dotenv = require("dotenv");
+const cookieParser = require("cookie-parser");
 
 // Load environment variables
 dotenv.config();
 
-const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174', 'https://fastestcreators.com',"https://effortless-axolotl-520cbe.netlify.app"];
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "https://fastestcreators.com",
+  "https://effortless-axolotl-520cbe.netlify.app",
+];
 const corsOptions = {
   origin: (origin, callback) => {
     if (allowedOrigins.includes(origin) || !origin) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error("Not allowed by CORS"));
     }
   },
   credentials: true,
@@ -29,7 +33,7 @@ const corsOptions = {
 
 //middleware
 app.use(express.json());
-app.use(cors(corsOptions)); 
+app.use(cors(corsOptions));
 app.use(cookieParser());
 // app.use(express.urlencoded({ extended: true }));
 
@@ -37,19 +41,19 @@ app.use(cookieParser());
 connectDB();
 
 // Dynamically all routes
-routes.forEach(route => {
+routes.forEach((route) => {
   app.use(`/api/v1${route.path}`, route.handler);
 });
 
-app.get('/', (req, res) => {
-  res.send('API is working!');
+app.get("/", (req, res) => {
+  res.send("API is working!");
 });
 
 // Undefined Route Handler (404)
 app.use((req, res, next) => {
   res.status(404).json({
     statusCode: 404,
-    message: 'Route not found',
+    message: "Route not found",
   });
 });
 

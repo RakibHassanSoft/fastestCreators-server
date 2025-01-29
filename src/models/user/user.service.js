@@ -6,43 +6,7 @@ const crypto = require('crypto');
 const { registerSchema, loginSchema } = require('./user.validation'); // Adjust the path as needed
 const { sendEmailForOtp, sendEmailForRegister } = require('../../config/nodemailerConfig');
 const { updateUserPassword } = require('../../firebase/firebaseAuthUtils');
-const JWT_SECRET = 'your_jwt_secret'; 
 
-// Register User
-// const registerUserService = async (userData) => {
-//   try {
-//     const validatedData = await registerSchema.validateAsync(userData);
-
-//     const existingUser = await User.findOne({ email: validatedData.email });
-//     if (existingUser) {
-//       throw new Error('Email already registered');
-//     }
-
-//     const newUser = new User(validatedData);
-//      const res = await newUser.save();
-//     return res;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
-
-
-// Login User by local storge
-// const loginUserService = async (userData) => {
-//   try {
-//     const validatedData = await loginSchema.validateAsync(userData);
-
-//     const user = await User.findOne({ email: validatedData.email });
-//     if (!user || !(await user.comparePassword(validatedData.password))) {
-//       throw new Error('Invalid email or password');
-//     }
-
-//     const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '7h' });
-//     return { token };
-//   } catch (error) {
-//     throw error;
-//   }
-// };
 //FOr cookie
 const registerUserService = async (userData) => {
   try {
@@ -58,7 +22,7 @@ const registerUserService = async (userData) => {
     await newUser.save();
 
     // Generate a token for the new user
-    const token = jwt.sign({ id: newUser._id, role: newUser.role }, JWT_SECRET, { expiresIn: '7h' });
+    const token = jwt.sign({ id: newUser._id, role: newUser.role }, process.env.JWT_SECRET, { expiresIn: '7h' });
   
 
     // sendEmailForRegister(newUser.email, 'Welcome to our platform', newUser.name); // Send welcome email
@@ -94,7 +58,7 @@ const loginUserService = async (userData) => {
     }
 
     // Generate a token
-    const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '7h' });
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7h' });
     
     return { token }; // Return the token
   } catch (error) {
@@ -131,7 +95,7 @@ const loginOrRegisterWithSocialMediaService = async (payload) => {
     }
 
     // Generate a token for the user
-    const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '7h' });
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7h' });
 
     // Return the user data and token
     return { user, token };
