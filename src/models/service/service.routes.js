@@ -14,7 +14,7 @@ serviceRouter.get("/all", serviceController.getAllServices);
 serviceRouter.get("/single-service/:id",authenticate,isAdmin, serviceController.getServiceById);
 
 // Update a service (Only accessible by admin)
-serviceRouter.put("/update/:id",authenticate,isAdmin, serviceController.updateService);
+serviceRouter.put("/update/:id", serviceController.updateService);
 
 // Delete a service (Only accessible by admin)
 serviceRouter.delete("/delete-service/:id",authenticate,isAdmin, serviceController.deleteService);

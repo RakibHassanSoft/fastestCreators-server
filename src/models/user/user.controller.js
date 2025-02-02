@@ -97,7 +97,7 @@ const updateUserUserRole = async (req, res) => {
 
   try {
     const updatedUser = await updateUserRoleService(userId, updateData);
-    res.status(200).json(updatedUser);
+    sendResponse(res, 200, 'Login successful',updatedUser);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

@@ -119,7 +119,7 @@ const sendEmailForOtp = async (to, subject, otp) => {
                   <span>${otp}</span>
               </div>
               <div class="message">
-                  <p>This OTP is valid for 40 seconds.</p>
+                  <p>This OTP is valid for 120 seconds.</p>
               </div>
               <div class="footer">
                   <p>If you did not request this, please ignore this email.</p>
