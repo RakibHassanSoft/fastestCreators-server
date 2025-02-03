@@ -1,23 +1,36 @@
-const sendResponse = require('../../utils/responseHelper');
-const { loginUserService, registerUserService, getSingleUserService, getAllUsersService, deleteUserService, updateUserRoleService, addMoneyService, minusService, loginOrRegisterWithSocialMediaService, getSingleUserByEmailService, findAdminService, sendOtpService, verifyOtpService, resetPasswordService } = require('./user.service');
+const sendResponse = require("../../utils/responseHelper");
+const {
+  loginUserService,
+  registerUserService,
+  getSingleUserService,
+  getAllUsersService,
+  deleteUserService,
+  updateUserRoleService,
+  addMoneyService,
+  minusService,
+  loginOrRegisterWithSocialMediaService,
+  getSingleUserByEmailService,
+  findAdminService,
+  sendOtpService,
+  verifyOtpService,
+  resetPasswordService,
+} = require("./user.service");
 
 //Using cookie
 const registerUser = async (req, res) => {
   try {
     const { newUser, token } = await registerUserService(req.body); // Get user and token from the service
-    
-   
+
     // Set the token as an HTTP-only cookie
-    res.cookie('token', token, {
-      httpOnly: true,  // ✅ Prevents client-side JavaScript access (Security)
-      secure: process.env.NODE_ENV === 'production',  // ✅ Required for HTTPS in production
-      sameSite: 'None', // ✅ Allows cross-site cookie sharing
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Only use Secure in production
+      sameSite: "None", // Required for cross-origin cookies
       maxAge: 7 * 60 * 60 * 1000, // 7 hours
-      domain: '.fastestcreators.com', // ✅ Ensure it works across subdomains (adjust if needed)
-      path: '/', // ✅ Make sure it's accessible everywhere
+      path: "/",
     });
 
-    sendResponse(res, 200, 'User registered successfully', { user: newUser });
+    sendResponse(res, 200, "User registered successfully", { user: newUser });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -25,18 +38,17 @@ const registerUser = async (req, res) => {
 //login user
 const loginUser = async (req, res) => {
   try {
-    const result = await loginUserService(req.body);  // Get the token from the service
+    const result = await loginUserService(req.body); // Get the token from the service
     // Set the token as an HTTP-only cookie
-    res.cookie('token', token, {
-      httpOnly: true,  // ✅ Prevents client-side JavaScript access (Security)
-      secure: process.env.NODE_ENV === 'production',  // ✅ Required for HTTPS in production
-      sameSite: 'None', // ✅ Allows cross-site cookie sharing
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Only use Secure in production
+      sameSite: "None", // Required for cross-origin cookies
       maxAge: 7 * 60 * 60 * 1000, // 7 hours
-      domain: '.fastestcreators.com', // ✅ Ensure it works across subdomains (adjust if needed)
-      path: '/', // ✅ Make sure it's accessible everywhere
+      path: "/",
     });
-    sendResponse(res, 200, 'Login successful');
-  
+
+    sendResponse(res, 200, "Login successful");
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -46,8 +58,8 @@ const sendOtp = async (req, res) => {
   try {
     const { email } = req.body;
     const response = await sendOtpService(email);
-  
-    sendResponse(res, 200, 'OTP sent successfully');
+
+    sendResponse(res, 200, "OTP sent successfully");
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -57,8 +69,8 @@ const verifyOtp = async (req, res) => {
   try {
     const { email, otp } = req.body;
     const response = await verifyOtpService(email, otp);
-    
-    sendResponse(res, 200, 'Otp varification successfully done ');
+
+    sendResponse(res, 200, "Otp varification successfully done ");
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -69,7 +81,7 @@ const resetPassword = async (req, res) => {
   try {
     const { email, newPassword } = req.body;
     const response = await resetPasswordService(email, newPassword);
-    sendResponse(res, 200, 'Password reset successfully',response);
+    sendResponse(res, 200, "Password reset successfully", response);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -77,34 +89,33 @@ const resetPassword = async (req, res) => {
 
 const loginUserWithSocialmedia = async (req, res) => {
   try {
-    const result = await loginOrRegisterWithSocialMediaService(req.body);  // Get the token from the service
+    const result = await loginOrRegisterWithSocialMediaService(req.body); // Get the token from the service
     // Set the token as an HTTP-only cookie
-    res.cookie('token', token, {
-      httpOnly: true,  // ✅ Prevents client-side JavaScript access (Security)
-      secure: process.env.NODE_ENV === 'production',  // ✅ Required for HTTPS in production
-      sameSite: 'None', // ✅ Allows cross-site cookie sharing
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Only use Secure in production
+      sameSite: "None", // Required for cross-origin cookies
       maxAge: 7 * 60 * 60 * 1000, // 7 hours
-      domain: '.fastestcreators.com', // ✅ Ensure it works across subdomains (adjust if needed)
-      path: '/', // ✅ Make sure it's accessible everywhere
+      path: "/",
     });
-    sendResponse(res, 200, 'Login successful',result);
-   
+
+    sendResponse(res, 200, "Login successful", result);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 //Update user role
 const updateUserUserRole = async (req, res) => {
-  const { userId } = req.params;  // Assuming gigId comes from URL params
-  const updateData = req.body;   // Assuming update data comes from the request body
+  const { userId } = req.params; // Assuming gigId comes from URL params
+  const updateData = req.body; // Assuming update data comes from the request body
 
   try {
     const updatedUser = await updateUserRoleService(userId, updateData);
-    sendResponse(res, 200, 'Login successful',updatedUser);
+    sendResponse(res, 200, "Login successful", updatedUser);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-}
+};
 // Controller to get a single user by ID
 const getSingleUser = async (req, res) => {
   const { userId } = req.params;
@@ -118,8 +129,8 @@ const getSingleUser = async (req, res) => {
 };
 // Controller to get a single user by ID
 const getSingleUserByEmail = async (req, res) => {
-  const { email } = req.query; 
-  console.log(email)
+  const { email } = req.query;
+  console.log(email);
   try {
     const user = await getSingleUserByEmailService(email);
     res.status(200).json(user);
@@ -132,7 +143,7 @@ const getSingleUserByEmail = async (req, res) => {
 const getAllUsers = async (req, res) => {
   try {
     const users = await getAllUsersService();
-    sendResponse(res, 200, 'Users fetched successfully', users);
+    sendResponse(res, 200, "Users fetched successfully", users);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -155,7 +166,9 @@ const addMoneyOfUser = async (req, res) => {
     const { userId, amount } = req.body; // Get userId and amount from request body
 
     if (!userId || !amount) {
-      return res.status(400).json({ message: 'userId and amount are required' });
+      return res
+        .status(400)
+        .json({ message: "userId and amount are required" });
     }
 
     const response = await addMoneyService(userId, amount); // Call the service function
@@ -171,7 +184,9 @@ const minusMoneyOfUser = async (req, res) => {
     const { userId, amount } = req.body; // Get userId and amount from request body
 
     if (!userId || !amount) {
-      return res.status(400).json({ message: 'userId and amount are required' });
+      return res
+        .status(400)
+        .json({ message: "userId and amount are required" });
     }
 
     const response = await minusService(userId, amount); // Call the service function
@@ -184,21 +199,20 @@ const minusMoneyOfUser = async (req, res) => {
 //logout coockie
 const logoutUser = (req, res) => {
   try {
-    res.clearCookie('token', {
+    res.clearCookie("token", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'Strict',
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
     });
-    sendResponse(res, 200, 'Logged out successfully');
+    sendResponse(res, 200, "Logged out successfully");
   } catch (error) {
-    sendResponse(res, 500, 'Logout failed', error.message);
+    sendResponse(res, 500, "Logout failed", error.message);
   }
 };
 
 const isAdminController = async (req, res) => {
   try {
     // Assuming the user is available through req.user (after authenticate middleware)
-  
 
     const isAdmin = true; // Assuming `isAdmin` is a field in your User model
 
@@ -206,18 +220,20 @@ const isAdminController = async (req, res) => {
     res.status(200).json({ isAdmin });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Failed to check admin status", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Failed to check admin status", error: error.message });
   }
 };
 
 const findAdminController = async (req, res) => {
   const { email } = req.query; // Get email from query string
-  
+
   try {
     const isAdmin = await findAdminService(email);
- 
+
     if (isAdmin) {
-      return sendResponse(res, 200, "User is an admin.",isAdmin);
+      return sendResponse(res, 200, "User is an admin.", isAdmin);
     } else {
       return sendResponse(res, 403, "User is not an admin.");
     }
@@ -225,7 +241,7 @@ const findAdminController = async (req, res) => {
     return sendResponse(res, 500, `Error: ${error.message}`);
   }
 };
-module.exports = { 
+module.exports = {
   addMoneyOfUser,
   minusMoneyOfUser,
   registerUser,
@@ -241,6 +257,5 @@ module.exports = {
   findAdminController,
   sendOtp,
   verifyOtp,
-  resetPassword
-
- };
+  resetPassword,
+};
