@@ -344,17 +344,14 @@ const minusService = async (userId, amountToSubtract) => {
 
 const findAdminService = async (email) => {
   try {
+    // console.log(email)
     const user = await User.findOne({ email });
     if (!user) {
       throw new Error("User not found");
     }
 
-    // Check if the user is an admin
-    if (user.role === "admin") {
-      return user; // User is an admin
-    } else {
-      return false; // User is not an admin
-    }
+   
+      return user; // User is not an admin
   } catch (error) {
     throw new Error("Error fetching user by email: " + error.message);
   }
