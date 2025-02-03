@@ -9,10 +9,12 @@ const registerUser = async (req, res) => {
    
     // Set the token as an HTTP-only cookie
     res.cookie('token', token, {
-      httpOnly: true, // Accessible only by the server
-      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-      maxAge: 7 * 60 * 60 * 1000, // 7 hours (same as JWT expiration time)
-      // sameSite: 'Strict', // Prevents CSRF
+      httpOnly: true,  // ✅ Prevents client-side JavaScript access (Security)
+      secure: process.env.NODE_ENV === 'production',  // ✅ Required for HTTPS in production
+      sameSite: 'None', // ✅ Allows cross-site cookie sharing
+      maxAge: 7 * 60 * 60 * 1000, // 7 hours
+      domain: '.fastestcreators.com', // ✅ Ensure it works across subdomains (adjust if needed)
+      path: '/', // ✅ Make sure it's accessible everywhere
     });
 
     sendResponse(res, 200, 'User registered successfully', { user: newUser });
@@ -25,14 +27,16 @@ const loginUser = async (req, res) => {
   try {
     const result = await loginUserService(req.body);  // Get the token from the service
     // Set the token as an HTTP-only cookie
-    res.cookie('token', result.token, {
-      httpOnly: true, // Makes the cookie accessible only by the web server
-      secure: process.env.NODE_ENV === 'production', // Set to true in production for HTTPS
-      maxAge: 7 * 60 * 60 * 1000, // 7 hours (same as JWT expiration time)
-      // sameSite: 'Strict', // Prevents the cookie from being sent with cross-site requests
+    res.cookie('token', token, {
+      httpOnly: true,  // ✅ Prevents client-side JavaScript access (Security)
+      secure: process.env.NODE_ENV === 'production',  // ✅ Required for HTTPS in production
+      sameSite: 'None', // ✅ Allows cross-site cookie sharing
+      maxAge: 7 * 60 * 60 * 1000, // 7 hours
+      domain: '.fastestcreators.com', // ✅ Ensure it works across subdomains (adjust if needed)
+      path: '/', // ✅ Make sure it's accessible everywhere
     });
     sendResponse(res, 200, 'Login successful');
-   
+  
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -71,18 +75,17 @@ const resetPassword = async (req, res) => {
   }
 };
 
-
-
-
 const loginUserWithSocialmedia = async (req, res) => {
   try {
     const result = await loginOrRegisterWithSocialMediaService(req.body);  // Get the token from the service
     // Set the token as an HTTP-only cookie
-    res.cookie('token', result.token, {
-      httpOnly: true, // Makes the cookie accessible only by the web server
-      secure: process.env.NODE_ENV === 'production', // Set to true in production for HTTPS
-      maxAge: 7 * 60 * 60 * 1000, // 7 hours (same as JWT expiration time)
-      // sameSite: 'Strict', // Prevents the cookie from being sent with cross-site requests
+    res.cookie('token', token, {
+      httpOnly: true,  // ✅ Prevents client-side JavaScript access (Security)
+      secure: process.env.NODE_ENV === 'production',  // ✅ Required for HTTPS in production
+      sameSite: 'None', // ✅ Allows cross-site cookie sharing
+      maxAge: 7 * 60 * 60 * 1000, // 7 hours
+      domain: '.fastestcreators.com', // ✅ Ensure it works across subdomains (adjust if needed)
+      path: '/', // ✅ Make sure it's accessible everywhere
     });
     sendResponse(res, 200, 'Login successful',result);
    

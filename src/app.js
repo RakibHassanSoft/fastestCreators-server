@@ -6,30 +6,15 @@ const app = express();
 const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 
-// Load environment variables
-dotenv.config();
-
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:5174",
-  "https://fastestcreators.com",
-  "https://effortless-axolotl-520cbe.netlify.app",
-];
 const corsOptions = {
-  origin: (origin, callback) => {
-    if (allowedOrigins.includes(origin) || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
+  origin: [
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "https://fastestcreators.com",
+    "https://effortless-axolotl-520cbe.netlify.app",
+  ],
+  credentials: true, 
 };
-// const data
-// const corsOptions = {
-//   origin: ['http://localhost:5173',"http://localhost:5174","https://fastestcreators.com"],// Frontend URL
-//   credentials: true, // Allow cookies to be sent with requests
-// };
 
 //middleware
 app.use(express.json());

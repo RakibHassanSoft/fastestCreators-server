@@ -11,9 +11,9 @@ UserRouter.get('/:userId',authenticate,isAdmin, getSingleUser);
 // Route to get a single user by ID
 UserRouter.get('/main-auth',authenticate,isAdmin, isAdminController);
 // Route to get all users (excluding deleted ones)
-UserRouter.get('/',authenticate, getAllUsers);
+UserRouter.get('/',authenticate,isAdmin, getAllUsers);
 // Route to delete a user (mark as deleted)
-UserRouter.put('/:userId/delete', deleteUser);
+UserRouter.put('/:userId/delete',authenticate,isAdmin, deleteUser);
 
 // add money(Optional)
 UserRouter.post('/add-money',authenticate,isAdmin, addMoneyOfUser);
