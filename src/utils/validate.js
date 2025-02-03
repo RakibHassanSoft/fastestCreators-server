@@ -1,4 +1,3 @@
-const Joi = require('joi');
 
 const validateSchemaWithJoi = (schema) => {
   return async (req, res, next) => {

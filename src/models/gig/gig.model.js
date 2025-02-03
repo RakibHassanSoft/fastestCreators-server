@@ -1,4 +1,3 @@
-const { boolean, required } = require("joi");
 const mongoose = require("mongoose");
 
 // Validator to ensure exactly three values for packages

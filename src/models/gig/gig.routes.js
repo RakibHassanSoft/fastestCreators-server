@@ -11,8 +11,6 @@ const {
   getGigByFieldController,
 } = require("./gig.controller");
 const { authenticate, isAdmin } = require("../../middlewares/authMiddleware");
-const validateSchemaWithJoi = require("../../utils/validate");
-const {  GigSchema } = require("./gig.model");
 
 // Routes for gig-related actions
 
