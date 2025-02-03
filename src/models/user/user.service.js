@@ -172,6 +172,7 @@ const verifyOtpService = async (email, otp) => {
 // Reset Password
 const resetPasswordService = async (email, newPassword) => {
   try {
+  
     const user = await User.findOne({ email });
     if (!user) throw new Error("User not found");
 
