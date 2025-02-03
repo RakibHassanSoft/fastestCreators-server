@@ -13,6 +13,7 @@ const serviceAccount = {
   client_x509_cert_url: process.env.GOOGLE_CLIENT_X509_CERT_URL,
   universe_domain: process.env.GOOGLE_UNIVERSE_DOMAIN,
 };
+
 // Initialize Firebase Admin SDK
 if (!admin.apps.length) {
   // const serviceAccount = require('./service-account-key.json'); // Ensure this is the correct path
