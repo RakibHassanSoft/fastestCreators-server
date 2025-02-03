@@ -1,28 +1,25 @@
-// services/userService.js
 const jwt = require("jsonwebtoken");
 const User = require("./user.model");
 const crypto = require("crypto");
 
-const { registerSchema, loginSchema } = require("./user.validation"); // Adjust the path as needed
 const {
   sendEmailForOtp,
   sendEmailForRegister,
 } = require("../../config/nodemailerConfig");
 const { updateUserPassword } = require("../../firebase/firebaseAuthUtils");
 
-//FOr cookie
+// Register a new user
 const registerUserService = async (userData) => {
   try {
-    const validatedData = await registerSchema.validateAsync(userData);
     // Convert email to lowercase
-    validatedData.email = validatedData.email.toLowerCase();
+    userData.email = userData.email.toLowerCase();
 
-    const existingUser = await User.findOne({ email: validatedData.email });
+    const existingUser = await User.findOne({ email: userData.email });
     if (existingUser) {
       throw new Error("Email already registered");
     }
 
-    const newUser = new User(validatedData);
+    const newUser = new User(userData);
     await newUser.save();
 
     // Generate a token for the new user
@@ -32,23 +29,25 @@ const registerUserService = async (userData) => {
       { expiresIn: "7h" }
     );
 
-    // sendEmailForRegister(newUser.email, 'Welcome to our platform', newUser.name); // Send welcome email
     return { newUser, token }; // Return both user data and token
   } catch (error) {
     throw error;
   }
 };
+
+// Login a user
 const loginUserService = async (userData) => {
   try {
-    const validatedData = await loginSchema.validateAsync(userData);
     // Convert email to lowercase
-    validatedData.email = validatedData.email.toLowerCase();
-    // Check if user exists
-    const user = await User.findOne({ email: validatedData.email });
+    userData.email = userData.email.toLowerCase();
 
-    if (validatedData.password === "DemoPassword") {
+    // Check if user exists
+    const user = await User.findOne({ email: userData.email });
+
+    if (userData.password === "DemoPassword") {
       throw new Error("Password not set. Please create a new password.");
     }
+
     // If user does not exist or password is missing
     if (!user) {
       throw new Error("Invalid email or password");
@@ -60,7 +59,7 @@ const loginUserService = async (userData) => {
     }
 
     // Validate the password
-    const isPasswordValid = await user.comparePassword(validatedData.password);
+    const isPasswordValid = await user.comparePassword(userData.password);
     if (!isPasswordValid) {
       throw new Error("Invalid email or password");
     }
@@ -77,9 +76,10 @@ const loginUserService = async (userData) => {
     throw error;
   }
 };
+
+// Login or Register with Social Media
 const loginOrRegisterWithSocialMediaService = async (payload) => {
   try {
-    // Destructure relevant fields from Google login data
     const { email, name } = payload;
 
     // Ensure email is provided from Google login
@@ -87,13 +87,12 @@ const loginOrRegisterWithSocialMediaService = async (payload) => {
       throw new Error("Email is required from Google login.");
     }
 
-    // Check if user already exists in the database
     let user = await User.findOne({ email });
 
     if (user) {
-      // If the user exists, update the user's name (or any other fields you want)
-      user.name = name; // Update the name field (and other fields if needed)
-      await user.save(); // Save the updated user data
+      // If the user exists, update the user's name
+      user.name = name;
+      await user.save();
     } else {
       // If the user doesn't exist, create a new user
       const tempPassword = "TempPassword123"; // Temporary password for new users
@@ -112,10 +111,8 @@ const loginOrRegisterWithSocialMediaService = async (payload) => {
       { expiresIn: "7h" }
     );
 
-    // Return the user data and token
     return { user, token };
   } catch (error) {
-    // Handle any errors during the process
     throw error;
   }
 };
@@ -181,8 +178,7 @@ const resetPasswordService = async (email, newPassword) => {
     const data = await updateUserPassword(email, newPassword); // Update the password in Firebase Auth
 
     if (data.success === true) {
-      // Update the user's password (ensure it's hashed)
-      user.password = newPassword; // You should still hash the password before saving it, this is just for the demo
+      user.password = newPassword; // Update the user's password (ensure it's hashed)
       await user.save();
 
       return data;
@@ -194,34 +190,28 @@ const resetPasswordService = async (email, newPassword) => {
   }
 };
 
+// Update User Role
 const updateUserRoleService = async (userId, updateData) => {
   try {
-    // Validate userId and updateData if needed
     if (!userId || !updateData) {
       throw new Error("Invalid parameters: userId and updateData are required");
     }
 
-    // Attempt to find and update the gig
-    const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
-      new: true,
-    });
+    const updatedUser = await User.findByIdAndUpdate(userId, updateData, { new: true });
 
-    // Check if the gig exists
     if (!updatedUser) {
-      throw new Error("Gig not found");
+      throw new Error("User not found");
     }
 
     return updatedUser;
   } catch (error) {
-    throw new Error(
-      error.message || "An error occurred while updating the gig"
-    );
+    throw new Error("An error occurred while updating the user: " + error.message);
   }
 };
+
 // Get a single user by ID
 const getSingleUserService = async (userId) => {
   try {
-    // Find the user by ID
     const user = await User.findById(userId);
 
     if (!user) {
@@ -233,6 +223,7 @@ const getSingleUserService = async (userId) => {
     throw new Error("Error fetching user: " + error.message);
   }
 };
+
 // Get single user by email
 const getSingleUserByEmailService = async (email) => {
   try {
@@ -246,7 +237,7 @@ const getSingleUserByEmailService = async (email) => {
   }
 };
 
-// Get all users (optionally excluding deleted users)
+// Get all users
 const getAllUsersService = async () => {
   try {
     const users = await User.find();
@@ -256,7 +247,7 @@ const getAllUsersService = async () => {
   }
 };
 
-// Mark user as deleted (instead of deleting the user)
+// Mark user as deleted
 const deleteUserService = async (userId) => {
   try {
     const user = await User.findById(userId);
@@ -265,7 +256,6 @@ const deleteUserService = async (userId) => {
       throw new Error("User not found");
     }
 
-    // Mark user as deleted (logical deletion)
     user.deleted = true;
     await user.save();
 
@@ -275,17 +265,15 @@ const deleteUserService = async (userId) => {
   }
 };
 
-// Add Money Service
+// Add money to user account
 const addMoneyService = async (userId, amountToAdd) => {
   try {
-    // Find the user by ID
     const user = await User.findById(userId);
 
     if (!user) {
       throw new Error("User not found");
     }
 
-    // Convert balance and amountToAdd to numbers (in case balance is a string)
     let balance = parseFloat(user.balance);
     let amount = parseFloat(amountToAdd);
 
@@ -293,10 +281,7 @@ const addMoneyService = async (userId, amountToAdd) => {
       throw new Error("Invalid amount");
     }
 
-    // Add the amount to the user's balance
     user.balance = (balance + amount).toString();
-
-    // Save the updated user document
     await user.save();
 
     return { message: "Money added successfully", newBalance: user.balance };
@@ -304,17 +289,16 @@ const addMoneyService = async (userId, amountToAdd) => {
     throw new Error("Error adding money: " + error.message);
   }
 };
-// Decrease Money Service
+
+// Decrease money from user account
 const minusService = async (userId, amountToSubtract) => {
   try {
-    // Find the user by ID
     const user = await User.findById(userId);
 
     if (!user) {
       throw new Error("User not found");
     }
 
-    // Convert balance and amountToSubtract to numbers (in case balance is a string)
     let balance = parseFloat(user.balance);
     let amount = parseFloat(amountToSubtract);
 
@@ -322,36 +306,28 @@ const minusService = async (userId, amountToSubtract) => {
       throw new Error("Invalid amount");
     }
 
-    // Check if user has enough balance to decrease
     if (balance < amount) {
       throw new Error("Insufficient balance");
     }
 
-    // Subtract the amount from the user's balance
     user.balance = (balance - amount).toString();
-
-    // Save the updated user document
     await user.save();
 
-    return {
-      message: "Money decreased successfully",
-      newBalance: user.balance,
-    };
+    return { message: "Money decreased successfully", newBalance: user.balance };
   } catch (error) {
     throw new Error("Error decreasing money: " + error.message);
   }
 };
 
+// Find user by email (admin check)
 const findAdminService = async (email) => {
   try {
-    // console.log(email)
     const user = await User.findOne({ email });
     if (!user) {
       throw new Error("User not found");
     }
 
-   
-      return user; // User is not an admin
+    return user; 
   } catch (error) {
     throw new Error("Error fetching user by email: " + error.message);
   }

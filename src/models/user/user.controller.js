@@ -224,7 +224,7 @@ const isAdminController = async (req, res) => {
 };
 const findAdminController = async (req, res) => {
   const { email } = req.query; // Get email from query string
-  console.log("Email received:", email);
+  // console.log("Email received:", email);
 
   try {
     const userData = await findAdminService(email);

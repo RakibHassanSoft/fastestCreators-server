@@ -1,20 +1,17 @@
 const Service = require('./service.model');
-const { validateService, validateUpdatedService } = require('./service.validation');
 
 // Create a new service
 exports.createService = async (user, body) => {
-  const { error } = validateService(body); // Validate service data using Joi
-  if (error) {
-    throw new Error(error.details[0].message);
-  }
-  console.log(body)
-  const { title, description ,serviceImage} = body;
+  // No validation, proceed with the body data directly
+  const { title, description, serviceImage } = body;
+  
   const service = new Service({
     title,
     description,
     serviceImage,
-    adminId: user.id, 
+    adminId: user.id,
   });
+
   try {
     await service.save();
     return service;
@@ -27,13 +24,11 @@ exports.createService = async (user, body) => {
 exports.getAllServices = async () => {
   try {
     // Use the `populate` method to include the admin data in the response
-    return await Service.find()
-      .populate('adminId',) // Only include the fields you need from the admin
+    return await Service.find().populate('adminId');
   } catch (error) {
     throw new Error(error.message);
   }
 };
-
 
 // Get a specific service by ID
 exports.getServiceById = async (id) => {
@@ -50,17 +45,8 @@ exports.getServiceById = async (id) => {
 
 // Update a service
 exports.updateService = async (id, body) => {
-  const { error } = validateUpdatedService(body); // Validate service data using Joi
-  if (error) {
-    throw new Error(error.details[0].message);
-  }
-
   try {
-    const service = await Service.findByIdAndUpdate(
-      id,
-      body,
-      { new: true }
-    );
+    const service = await Service.findByIdAndUpdate(id, body, { new: true });
     if (!service) {
       throw new Error('Service not found');
     }
