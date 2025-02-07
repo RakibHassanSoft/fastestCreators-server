@@ -25,6 +25,7 @@ exports.getAllServices = async (req, res) => {
 exports.getServiceById = async (req, res) => {
   try {
     const service = await serviceService.getServiceById(req.params.id);
+
     res.status(200).json(service);
   } catch (error) {
     res.status(404).json({ message: error.message });
@@ -43,9 +44,10 @@ exports.updateService = async (req, res) => {
 
 // Delete a service
 exports.deleteService = async (req, res) => {
+  // console.log(req.params)
    try {
-    const response = await serviceService.deleteService(req.params.id);
-    sendResponse(res, 200, 'Service Deleted successfully', service);
+    const response = await serviceService.deleteService(req.params);
+    sendResponse(res, 200, 'Service Deleted successfully', response);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

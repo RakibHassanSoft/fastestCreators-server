@@ -57,9 +57,13 @@ exports.updateService = async (id, body) => {
 };
 
 // Delete a service
-exports.deleteService = async (id) => {
+exports.deleteService = async (payload) => {
+  console.log(payload)
+  const {id} = payload;
+  console.log(id)
   try {
     const service = await Service.findByIdAndDelete(id);
+    // console.log(service)
     if (!service) {
       throw new Error('Service not found');
     }
