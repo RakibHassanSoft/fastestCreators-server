@@ -47,6 +47,7 @@ exports.deleteService = async (req, res) => {
   // console.log(req.params)
    try {
     const response = await serviceService.deleteService(req.params);
+    console.log(response)
     sendResponse(res, 200, 'Service Deleted successfully', response);
   } catch (error) {
     res.status(400).json({ message: error.message });
