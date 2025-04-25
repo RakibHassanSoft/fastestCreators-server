@@ -6,7 +6,7 @@ const handlePayment = async (req, res) => {
   // console.log(req.body); 
   const data = {
     total_amount,
-    currency: 'BDT',
+    currency: 'USD',
     tran_id: 'TRAN_' + new Date().getTime(),
     success_url: 'http://localhost:5000/payment/success',
     fail_url: 'http://localhost:5000/payment/fail',
