@@ -5,6 +5,7 @@ const serviceRouter = require("../models/service/service.routes");
 const userRouter = require("../models/user/user.routes");
 const contractUsRouter = require("../models/contractUs/contractUs.route");
 const blogRouter = require("../models/blog/blog.route");
+const paymentRouter = require("../models/Payment/payment.routes");
 
 const routes = [
     {
@@ -30,6 +31,10 @@ const routes = [
     {
       path: '/blogs',
       handler: blogRouter,
+    },
+    {
+      path: '/payment',
+      handler: paymentRouter,
     }
    
   ];

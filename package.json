@@ -14,7 +14,8 @@
     "mongoose": "^8.8.4",
     "nodemailer": "^6.9.14",
     "npm": "^11.1.0",
-    "querystring": "^0.2.1"
+    "querystring": "^0.2.1",
+    "sslcommerz-lts": "^1.1.0"
   },
   "name": "server",
   "version": "1.0.0",

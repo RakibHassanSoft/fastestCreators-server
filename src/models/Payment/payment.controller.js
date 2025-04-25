@@ -1,46 +1,68 @@
+// payment/payment.controller.js
+const { initiatePayment } = require("./payment.service");
 
-const userModel = require("../user/user.model");
-const logger = require("../utils/logger");
-const { createPaymentToken } = require("./payment.service");
-
-
-const processPayment = async (req, res) => {
-  const { userId, productId, amount, currency, billingDetails } = req.body;
+const handlePayment = async (req, res) => {
+  const { total_amount, cus_name, cus_email, cus_phone, cus_add1 } = req.body;
+  // console.log(req.body); 
+  const data = {
+    total_amount,
+    currency: 'BDT',
+    tran_id: 'TRAN_' + new Date().getTime(),
+    success_url: 'http://localhost:5000/payment/success',
+    fail_url: 'http://localhost:5000/payment/fail',
+    cancel_url: 'http://localhost:5000/payment/cancel',
+    ipn_url: 'http://localhost:5000/payment/ipn',
+    shipping_method: 'Courier',
+    product_name: 'Test Product',
+    product_category: 'Test Category',
+    product_profile: 'digital_goods',
+    cus_name,
+    cus_email,
+    cus_add1,
+    cus_city: 'Dhaka',
+    cus_postcode: '1207',
+    cus_country: 'Bangladesh',
+    cus_phone,
+  
+    // // ADD THESE SHIPPING FIELDS
+    ship_name: cus_name,
+    ship_add1: cus_add1,
+    ship_city: 'Dhaka',
+    ship_postcode: '1207',
+    ship_country: 'Bangladesh',
+  };
+  
 
   try {
-    // Validate required fields
-    if (!userId || !productId || !amount || !currency || !billingDetails) {
-      return res.status(400).json({ success: false, message: "Missing required fields." });
+    const response = await initiatePayment(data);
+    console.log("Payment Initiation Response:", response); // Debug output
+
+    if (response.GatewayPageURL) {
+      res.send({ url: response.GatewayPageURL });
+    } else {
+      res
+        .status(500)
+        .send({ message: "Payment initiation failed", debug: response });
     }
-
-    // Check if user balance is sufficient (example logic, assumes balance is part of the User schema)
-    const user = await userModel.findById(userId);
-    if (!user) {
-      return res.status(404).json({ success: false, message: "User not found." });
-    }
-
-    if (parseFloat(user.balance) < parseFloat(amount)) {
-      return res.status(400).json({ success: false, message: "Insufficient balance." });
-    }
-
-    // Process payment through service
-    const paymentRecord = await createPaymentToken({
-      userId,
-      productId,
-      amount,
-      currency,
-      billingDetails,
-    });
-
-    logger.log(`Payment processed successfully: ${paymentRecord._id}`);
-    return res.status(200).json({ success: true, payment: paymentRecord });
   } catch (error) {
-    logger.error(`Payment processing failed: ${error.message}`);
-    return res.status(error.statusCode || 500).json({
-      success: false,
-      message: error.message,
-    });
+    console.error("Error during payment:", error);
+    res.status(500).send({ error: error.message });
   }
 };
 
-module.exports = { processPayment };
+// For success/fail routes:
+const handleSuccess = (req, res) => {
+  console.log("Payment Success:", req.body);
+  res.redirect("http://localhost:3000/payment-success");
+};
+
+const handleFail = (req, res) => {
+  console.log("Payment Failed:", req.body);
+  res.redirect("http://localhost:3000/payment-fail");
+};
+
+module.exports = {
+  handlePayment,
+  handleSuccess,
+  handleFail,
+};
